@@ -1,0 +1,12 @@
+fastmcp
+requests
+urllib3
+python-dotenv
+langchain-openai
+pydantic
+streamlit
+langchain-mcp-adapters
+langchain-groq
+langchain-core
+langgraph
+
