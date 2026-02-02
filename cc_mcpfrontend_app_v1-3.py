@@ -1,3 +1,5 @@
+""" Catalyst Center MCP Frontend Application using Streamlit and LangGraph """
+
 import os
 import asyncio
 import streamlit as st

@@ -1,3 +1,5 @@
+""" Catalyst Center MCP Server """
+
 from fastmcp import FastMCP
 import requests
 import urllib3
