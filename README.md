@@ -8,6 +8,7 @@ Interface-Streamlit
 
 Unlock the power of conversational networking with the Cisco Catalyst Center AI Assistant. This application bridges the gap between complex network telemetry and natural language using OpenAI's GPT-4o and the Model Context Protocol (MCP).
 
+![image](https://github.com/user-attachments/assets/85513663-a39f-4aa0-917b-5caec5f3d6a9)
 
 🚀 Key Features
 
