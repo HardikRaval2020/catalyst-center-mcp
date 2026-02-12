@@ -8,7 +8,7 @@ Interface= Streamlit
 
 Unlock the power of conversational networking with the Cisco Catalyst Center AI Assistant. This application bridges the gap between complex network telemetry and natural language using OpenAI's GPT-4o and the Model Context Protocol (MCP).
 
-![image](https://github.com/user-attachments/assets/85513663-a39f-4aa0-917b-5caec5f3d6a9)
+<img width="887" height="806" alt="image" src="https://github.com/user-attachments/assets/c7826397-421e-4ec8-b981-0edb80646377" />
 
 🚀 Key Features
 
@@ -33,8 +33,8 @@ Language	Python 3.10+
 
 1. Clone the Repository
 
-git clone https://github.com/your-repo/cisco-catalyst-ai.git
-cd cisco-catalyst-ai
+git clone https://github.com/HardikRaval2020/catalyst-center-mcp.git
+cd cisco-catalyst-mcp
 
 2. Install Dependencies
 
