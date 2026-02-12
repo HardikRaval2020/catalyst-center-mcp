@@ -1,83 +1,91 @@
 
-Cisco Catalyst Center AI Assistant (MCP + LangGraph)
+🌐 Cisco Catalyst Center AI Assistant
 
-This project provides a natural language interface for Cisco Catalyst Center (formerly DNA Center). By leveraging the Model Context Protocol (MCP), LangGraph, and Groq, users can query network inventory, site hierarchies, and client analytics using plain English.
+Python 3.10+
+OpenAI GPT-4o
+Framework-LangGraph
+Interface-Streamlit
 
-Special Thanks to Richbibby for MCP Server code available at : https://github.com/richbibby/catalyst-center-mcp
+Unlock the power of conversational networking with the Cisco Catalyst Center AI Assistant. This application bridges the gap between complex network telemetry and natural language using OpenAI's GPT-4o and the Model Context Protocol (MCP).
 
-🚀 Features
 
-Natural Language Network Queries: Ask questions like "How many unreachable devices do I have?" or "Show me wireless clients connected in the last 2 hours."
-MCP Server Integration: A custom FastMCP server that bridges the Catalyst Center REST APIs to an LLM.
-Intelligent Reasoning: Uses LangGraph to handle multi-step tasks (e.g., converting "last 2 hours" into epoch timestamps before querying client data).
-Interactive UI: A clean, responsive chat interface built with Streamlit.
-Token-Optimized: Data is compacted before being sent to the LLM to stay within Groq's rate limits.
+🚀 Key Features
+
+🧠 Intelligent Reasoning: Powered by LangGraph, the assistant doesn't just search—it reasons through network issues, decides which tools to call, and summarizes findings.
+🛠️ Dynamic Tool Discovery: Automatically imports and wraps tools from your catalyst-center-mcp.py server.
+📊 Real-Time Insights: Query live inventory, client health, and network status directly from your Catalyst Center instance.
+💬 Modern Chat Interface: A sleek, responsive UI built with Streamlit for a seamless user experience.
+⚡ Async Performance: Built on asyncio to handle high-latency network calls without freezing the UI.
+
 
 🛠️ Tech Stack
 
-LLM: Groq (Llama 3 70B)
-Orchestration: LangChain & LangGraph
-Protocol: Model Context Protocol (MCP) via fastmcp
-Frontend: Streamlit
-Network API: Cisco Catalyst Center REST API
+Component	Technology
+LLM	OpenAI GPT-4o
+Orchestration	LangChain & LangGraph
+Protocol	Model Context Protocol (MCP)
+Frontend	Streamlit
+Language	Python 3.10+
 
-📋 Prerequisites
 
-Python 3.10 or higher
-Access to a Cisco Catalyst Center instance
-A Groq API Key
+📦 Installation & Setup
 
-🔧 Installation & Setup
-
-Clone the Repository
+1. Clone the Repository
 
 bash
 Copy Code
-git clone https://github.com/your-username/catalyst-center-ai.git
-cd catalyst-center-ai
-Create a Virtual Environment
+git clone https://github.com/your-repo/cisco-catalyst-ai.git
+cd cisco-catalyst-ai
+
+2. Install Dependencies
 
 bash
 Copy Code
-python -m venv venv
-source venv/bin/activate  # On Windows: venv\Scripts\activate
-Install Dependencies
+pip install streamlit langchain-openai langgraph mcp python-dotenv
 
-bash
-Copy Code
-pip install fastmcp requests python-dotenv langchain langchain-groq langgraph streamlit mcp urllib3 pydantic
-Configure Environment Variables Create a .env file in the root directory:
+
+Note: For Python versions earlier than 3.11, please install the compatibility layer:
+pip install exceptiongroup
+
+
+
+3. Configure Your Environment 🔑
+
+Create a .env file in the root directory:
+
 
 env
 Copy Code
-CCC_HOST=https://your-catalyst-center-ip
-CCC_USER=your-username
-CCC_PWD=your-password
-GROQ_API_KEY=gsk_your_groq_api_key_here
-GROQ_MODEL=available_groq_model
+OPENAI_API_KEY=sk-your-openai-key-here
+# Add any specific Catalyst Center environment variables required by your MCP server
 
-🖥️ Usage
 
-Start the Application Run the Streamlit frontend, which will automatically initialize the MCP server in the background:
+🚦 Quick Start
+
+Ensure your MCP server script (catalyst-center-mcp.py) is in the same directory as the app. Then, launch the assistant:
+
 
 bash
 Copy Code
-streamlit run app.py
-Example Queries
+streamlit run cc_mcpfrontend_openai_app_v1-4.py
 
-"List the first 5 devices in my network."
-"What is the site hierarchy for my organization?"
-"How many wireless clients were active today?"
-"Show me the interfaces for device [Device_ID]."
 
-🏗️ Project Structure
+🏗️ How It Works
 
-app.py: The main entry point. Contains the Streamlit UI and the LangGraph agent logic.
-catalyst-center-mcp.py: The MCP server defining the tools (API wrappers) available to the AI.
-.env: (Ignored by git) Stores sensitive credentials.
+Initialization: The app starts a background process for the MCP Server.
+Tool Mapping: It inspects the MCP server to find available network functions (e.g., get_devices, get_issues).
+The Brain (GPT-4o): When you ask a question, GPT-4o determines which network tool is needed.
+The Loop:
+Agent Node: Decides the next step.
+Tools Node: Executes the Cisco API call via MCP.
+Result: The agent summarizes the raw data into a human-friendly response.
 
-⚠️ Troubleshooting
 
-413 Request Too Large: This happens if the API returns too much data. The fetch_devices tool is optimized to return only essential fields.
-TaskGroup Error: Usually caused by print() statements in the MCP server script. Ensure all logs in catalyst-center-mcp.py are redirected to sys.stderr.
-SSL Warnings: The script bypasses SSL verification for lab environments. Ensure your CCC_HOST includes https://.
+🔒 Security & Best Practices
+
+API Safety: Never hardcode your OPENAI_API_KEY. Always use the .env file.
+Read-Only Access: It is recommended to use a Catalyst Center API user with read-only permissions for general querying.
+Error Handling: The app includes a recursive exception unwrapper to help debug complex MCP connection issues.
+
+
+Developed for the next generation of Intent-Based Networking. 🌐💡

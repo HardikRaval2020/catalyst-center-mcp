@@ -1,18 +1,18 @@
-""" Catalyst Center MCP Frontend Application using Streamlit and LangGraph """
 
 import os
 import asyncio
 import streamlit as st
 import sys
-from typing import Annotated, TypedDict, Any, Dict
+from typing import Annotated, TypedDict
 from dotenv import load_dotenv
 
-# LangChain Imports
-from langchain_groq import ChatGroq
+# LangChain OpenAI Imports
+from langchain_openai import ChatOpenAI
 from langchain_core.messages import BaseMessage, HumanMessage
 from langchain_core.tools import StructuredTool
 from langgraph.graph import StateGraph
 from langgraph.prebuilt import ToolNode, tools_condition
+from langgraph.graph.message import add_messages
 
 # MCP Client Imports
 from mcp import ClientSession, StdioServerParameters
@@ -30,7 +30,7 @@ else:
 load_dotenv()
 
 class State(TypedDict):
-    messages: Annotated[list[BaseMessage], "The messages in the conversation"]
+    messages: Annotated[list[BaseMessage], add_messages]
 
 def unwrap_exception(e):
     """Recursively find the real error inside a TaskGroup/ExceptionGroup."""
@@ -54,7 +54,7 @@ async def run_agent(user_input: str):
     try:
         async with stdio_client(server_params) as (read, write):
             async with ClientSession(read, write) as session:
-                # Initialize MCP Session with a timeout
+                # Initialize MCP Session
                 await asyncio.wait_for(session.initialize(), timeout=30.0)
                 
                 # Fetch tools from the MCP server
@@ -63,7 +63,6 @@ async def run_agent(user_input: str):
                 # Helper to convert MCP tool to LangChain StructuredTool
                 def make_langchain_tool(mcp_tool):
                     async def tool_wrapper(**kwargs) -> str:
-                        """Wrapper to call the MCP tool."""
                         result = await session.call_tool(mcp_tool.name, arguments=kwargs)
                         if result.isError:
                             return f"Error from tool {mcp_tool.name}: {result.content[0].text}"
@@ -79,13 +78,12 @@ async def run_agent(user_input: str):
                 langchain_tools = [make_langchain_tool(t) for t in mcp_tools_response.tools]
                 tool_node = ToolNode(langchain_tools)
                 
-                # Setup LLM with Groq
-                llm = ChatGroq(
-                    #model="llama-3.3-70b-versatile", 
-                    model=os.getenv("GROQ_MODEL","qwen/qwen3-32b"),
-                    groq_api_key=os.getenv("GROQ_API_KEY"),
-                    temperature=0,
-                    max_tokens=1024
+                # Setup LLM with OpenAI
+                # Using gpt-4o for superior tool calling and larger context window
+                llm = ChatOpenAI(
+                    model="gpt-4o",
+                    openai_api_key=os.getenv("OPENAI_API_KEY"),
+                    temperature=0
                 ).bind_tools(langchain_tools)
 
                 # Define Graph Logic
@@ -113,33 +111,24 @@ async def run_agent(user_input: str):
         return f"REAL ERROR: {unwrap_exception(e)}"
 
 # --- Streamlit UI ---
-st.set_page_config(page_title="Cisco Catalyst AI", layout="wide")
+st.set_page_config(page_title="Cisco Catalyst AI (OpenAI)", layout="wide")
 st.title("🌐 Cisco Catalyst Center Assistant")
-st.markdown("Ask questions about your network inventory, sites, and clients.")
+st.markdown("Query your network using OpenAI GPT-4o and MCP.")
 
 if "chat_history" not in st.session_state:
     st.session_state.chat_history = []
 
-# Display chat history
 for msg in st.session_state.chat_history:
     with st.chat_message(msg["role"]):
         st.markdown(msg["content"])
 
-# Chat Input
-if prompt := st.chat_input("How many devices are in my network?"):
+if prompt := st.chat_input("Ask about your network inventory or clients..."):
     st.session_state.chat_history.append({"role": "user", "content": prompt})
     with st.chat_message("user"):
         st.markdown(prompt)
 
     with st.chat_message("assistant"):
-        with st.spinner("Connecting to Catalyst Center and reasoning..."):
-            # Execute the agent
+        with st.spinner("OpenAI is analyzing your network..."):
             response = asyncio.run(run_agent(prompt))
             st.markdown(response)
             st.session_state.chat_history.append({"role": "assistant", "content": response})
-            
-            # Footnote logic for PowerPoint generation
-            if any(keyword in prompt.lower() for keyword in ["ppt", "presentation", "slides"]):
-                st.markdown("---")
-                st.info("Footnote: If you wish to generate a PowerPoint presentation using the text above, please click the PPT icon.")
-
