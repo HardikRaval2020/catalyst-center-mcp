@@ -1,10 +1,10 @@
 
 🌐 Cisco Catalyst Center AI Assistant
 
-Python 3.10+
-OpenAI GPT-4o
-Framework-LangGraph
-Interface-Streamlit
+Python= 3.10+
+OpenAI= GPT-4o
+Framework= LangGraph
+Interface= Streamlit
 
 Unlock the power of conversational networking with the Cisco Catalyst Center AI Assistant. This application bridges the gap between complex network telemetry and natural language using OpenAI's GPT-4o and the Model Context Protocol (MCP).
 
@@ -33,41 +33,28 @@ Language	Python 3.10+
 
 1. Clone the Repository
 
-bash
-Copy Code
 git clone https://github.com/your-repo/cisco-catalyst-ai.git
 cd cisco-catalyst-ai
 
 2. Install Dependencies
 
-bash
-Copy Code
 pip install streamlit langchain-openai langgraph mcp python-dotenv
-
-
-Note: For Python versions earlier than 3.11, please install the compatibility layer:
-pip install exceptiongroup
-
 
 
 3. Configure Your Environment 🔑
 
 Create a .env file in the root directory:
 
-
-env
-Copy Code
 OPENAI_API_KEY=sk-your-openai-key-here
-# Add any specific Catalyst Center environment variables required by your MCP server
+CCC_HOST=https://1.1.1.1
+CCC_USER=admin
+CCC_PWD=admin
 
 
 🚦 Quick Start
 
 Ensure your MCP server script (catalyst-center-mcp.py) is in the same directory as the app. Then, launch the assistant:
 
-
-bash
-Copy Code
 streamlit run cc_mcpfrontend_openai_app_v1-4.py
 
 
@@ -76,6 +63,7 @@ streamlit run cc_mcpfrontend_openai_app_v1-4.py
 Initialization: The app starts a background process for the MCP Server.
 Tool Mapping: It inspects the MCP server to find available network functions (e.g., get_devices, get_issues).
 The Brain (GPT-4o): When you ask a question, GPT-4o determines which network tool is needed.
+
 The Loop:
 Agent Node: Decides the next step.
 Tools Node: Executes the Cisco API call via MCP.
