@@ -27,6 +27,7 @@ Orchestration	LangChain & LangGraph
 Protocol	Model Context Protocol (MCP)
 Frontend	Streamlit
 Language	Python 3.10+
+MCP Server https://github.com/richbibby/catalyst-center-mcp (🌐Special thanks to Richbibby for his work on code)
 
 
 📦 Installation & Setup
